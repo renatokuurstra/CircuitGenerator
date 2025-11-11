@@ -1,0 +1,27 @@
+﻿{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0.0",
+  "FriendlyName": "Circuit Generator",
+  "Description": "Runtime plugin providing a basic actor for spline mesh circuit authoring.",
+  "Category": "Gameplay",
+  "CreatedBy": "Renato Kuurstra",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "CanContainContent": false,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "EnabledByDefault": true,
+  "Modules": [
+    {
+      "Name": "CircuitGenerator",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CircuitGeneratorTests",
+      "Type": "Developer",
+      "LoadingPhase": "Default"
+    }
+  ]
+}
