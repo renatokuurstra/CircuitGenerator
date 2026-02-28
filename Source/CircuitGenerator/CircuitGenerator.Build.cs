@@ -19,14 +19,13 @@ public class CircuitGenerator : ModuleRules
         {
         });
 
+        // Keep runtime module clean of editor-only dependencies.
         if (Target.bBuildEditor)
         {
+            // Required for FScopedTransaction used in editor-only code paths (WITH_EDITOR)
             PrivateDependencyModuleNames.AddRange(new string[]
             {
-                "UnrealEd",
-                "Slate",
-                "SlateCore",
-                "EditorSubsystem"
+                "UnrealEd"
             });
         }
     }

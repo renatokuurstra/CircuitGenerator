@@ -20,7 +20,7 @@
     },
     {
       "Name": "CircuitGeneratorTests",
-      "Type": "Developer",
+      "Type": "Editor",
       "LoadingPhase": "Default"
     }
   ]

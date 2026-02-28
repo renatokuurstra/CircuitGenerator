@@ -2,47 +2,23 @@
 
 #include "Modules/ModuleManager.h"
 
-#if WITH_EDITOR
-#include "SplineMeshCircuitVisualizer.h"
-#include "UnrealEd.h"
-#include "UnrealEdGlobals.h"
-#include "Editor/UnrealEdEngine.h"
-#include "Components/SplineMeshComponent.h"
-#endif
+#include "CoreMinimal.h"
 
 class FCircuitGeneratorModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override
 	{
-#if WITH_EDITOR
-		if (GUnrealEd)
-		{
-			Visualizer = MakeShareable(new FSplineMeshCircuitComponentVisualizer());
-			GUnrealEd->RegisterComponentVisualizer(USplineMeshComponent::StaticClass()->GetFName(), Visualizer);
-			if (Visualizer.IsValid())
-			{
-				Visualizer->OnRegister();
-			}
-		}
-#endif
+        // Editor-only visualizer registration moved to CircuitGeneratorEditor module.
 	}
 
 	virtual void ShutdownModule() override
 	{
-#if WITH_EDITOR
-		if (GUnrealEd && Visualizer.IsValid())
-		{
-			GUnrealEd->UnregisterComponentVisualizer(USplineMeshComponent::StaticClass()->GetFName());
-			Visualizer.Reset();
-		}
-#endif
+        // Editor-only visualizer unregistration handled by CircuitGeneratorEditor module.
 	}
 
-#if WITH_EDITOR
 private:
-	TSharedPtr<FSplineMeshCircuitComponentVisualizer> Visualizer;
-#endif
+    // No editor state here; kept runtime-only.
 };
 
 IMPLEMENT_MODULE(FCircuitGeneratorModule, CircuitGenerator)
