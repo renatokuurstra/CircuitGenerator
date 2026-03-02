@@ -13,6 +13,7 @@ public class CircuitGeneratorTests : ModuleRules
             "Core",
             "CoreUObject",
             "Engine",
+            "PhysicsCore",
             "CircuitGenerator",
             "CQTest"
         });

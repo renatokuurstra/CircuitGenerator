@@ -24,6 +24,10 @@ The Circuit Generator plugin is designed to simplify the creation of tracks, roa
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `Mesh` | `UStaticMesh*` | The mesh to be used for spline segments. |
+| `CollisionEnabled` | `ECollisionEnabled` | The collision type for the spawned segments (NoCollision, QueryOnly, PhysicsOnly, QueryAndPhysics). |
+| `CollisionProfileName` | `FName` | The collision profile name (e.g., "BlockAll", "Pawn"). |
+| `Mobility` | `EComponentMobility` | The mobility of the generated segments (Static, Movable, etc.). Default is Static. |
+| `PhysicsMaterialOverride` | `UPhysicalMaterial*` | The physics material to apply to the mesh segments. |
 | `SegmentLength` | `float` | The length of each segment. If 0, uses mesh bounds. |
 | `SplineComponent` | `USplineComponent*` | The path along which meshes are spawned. |
 

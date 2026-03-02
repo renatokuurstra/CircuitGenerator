@@ -7,6 +7,7 @@
 #include "Actors/SplineCircuitActor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Engine/StaticMesh.h"
 
 TEST_CLASS(CircuitGenerator_SplineCircuitActor, "CircuitGenerator.SplineCircuitActor")
@@ -92,5 +93,100 @@ TEST_CLASS(CircuitGenerator_SplineCircuitActor, "CircuitGenerator.SplineCircuitA
 		TArray<USplineMeshComponent*> CompsAfter;
 		Actor->GetComponents<USplineMeshComponent>(CompsAfter);
 		ASSERT_THAT(IsTrue(CompsAfter.Num() == 1));
+	}
+
+	TEST_METHOD(Recalculate_Applies_Collision_Enabled_Settings)
+	{
+		Actor->Mesh = DummyMesh;
+		Actor->SegmentLength = 100.0f;
+		Actor->SplineComponent->ClearSplinePoints();
+		Actor->SplineComponent->AddSplinePoint(FVector(0, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->AddSplinePoint(FVector(100, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->UpdateSpline();
+
+		// Default should be QueryAndPhysics
+		Actor->CollisionEnabled = ECollisionEnabled::QueryAndPhysics;
+		Actor->RecalculateSpline();
+
+		TArray<USplineMeshComponent*> Comps;
+		Actor->GetComponents<USplineMeshComponent>(Comps);
+		ASSERT_THAT(IsTrue(Comps.Num() == 1));
+		ASSERT_THAT(IsTrue(Comps[0]->GetCollisionEnabled() == ECollisionEnabled::QueryAndPhysics));
+
+		// Change to NoCollision
+		Actor->CollisionEnabled = ECollisionEnabled::NoCollision;
+		Actor->RecalculateSpline();
+
+		Comps.Empty();
+		Actor->GetComponents<USplineMeshComponent>(Comps);
+		ASSERT_THAT(IsTrue(Comps.Num() == 1));
+		ASSERT_THAT(IsTrue(Comps[0]->GetCollisionEnabled() == ECollisionEnabled::NoCollision));
+	}
+
+	TEST_METHOD(Recalculate_Applies_Physics_Material_Settings)
+	{
+		Actor->Mesh = DummyMesh;
+		Actor->SegmentLength = 100.0f;
+		Actor->SplineComponent->ClearSplinePoints();
+		Actor->SplineComponent->AddSplinePoint(FVector(0, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->AddSplinePoint(FVector(100, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->UpdateSpline();
+
+		UPhysicalMaterial* DummyPhysMat = NewObject<UPhysicalMaterial>(World, TEXT("DummyPhysMat"), RF_Transient);
+		Actor->PhysicsMaterialOverride = DummyPhysMat;
+		Actor->RecalculateSpline();
+
+		TArray<USplineMeshComponent*> Comps;
+		Actor->GetComponents<USplineMeshComponent>(Comps);
+		ASSERT_THAT(IsTrue(Comps.Num() == 1));
+		// Note: USplineMeshComponent::GetPhysMaterialOverride() exists
+		ASSERT_THAT(IsTrue(Comps[0]->BodyInstance.GetPhysMaterialOverride() == DummyPhysMat));
+	}
+
+	TEST_METHOD(Recalculate_Applies_Collision_Profile_Name)
+	{
+		Actor->Mesh = DummyMesh;
+		Actor->SegmentLength = 100.0f;
+		Actor->SplineComponent->ClearSplinePoints();
+		Actor->SplineComponent->AddSplinePoint(FVector(0, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->AddSplinePoint(FVector(100, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->UpdateSpline();
+
+		const FName TestProfile = TEXT("Pawn");
+		Actor->CollisionProfileName = TestProfile;
+		Actor->RecalculateSpline();
+
+		TArray<USplineMeshComponent*> Comps;
+		Actor->GetComponents<USplineMeshComponent>(Comps);
+		ASSERT_THAT(IsTrue(Comps.Num() == 1));
+		ASSERT_THAT(IsTrue(Comps[0]->GetCollisionProfileName() == TestProfile));
+	}
+
+	TEST_METHOD(Recalculate_Applies_Mobility_Settings)
+	{
+		Actor->Mesh = DummyMesh;
+		Actor->SegmentLength = 100.0f;
+		Actor->SplineComponent->ClearSplinePoints();
+		Actor->SplineComponent->AddSplinePoint(FVector(0, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->AddSplinePoint(FVector(100, 0, 0), ESplineCoordinateSpace::Local);
+		Actor->SplineComponent->UpdateSpline();
+
+		// Test Static
+		Actor->Mobility = EComponentMobility::Static;
+		Actor->RecalculateSpline();
+
+		TArray<USplineMeshComponent*> Comps;
+		Actor->GetComponents<USplineMeshComponent>(Comps);
+		ASSERT_THAT(IsTrue(Comps.Num() == 1));
+		ASSERT_THAT(IsTrue(Comps[0]->Mobility == EComponentMobility::Static));
+
+		// Test Movable
+		Actor->Mobility = EComponentMobility::Movable;
+		Actor->RecalculateSpline();
+
+		Comps.Empty();
+		Actor->GetComponents<USplineMeshComponent>(Comps);
+		ASSERT_THAT(IsTrue(Comps.Num() == 1));
+		ASSERT_THAT(IsTrue(Comps[0]->Mobility == EComponentMobility::Movable));
 	}
 };

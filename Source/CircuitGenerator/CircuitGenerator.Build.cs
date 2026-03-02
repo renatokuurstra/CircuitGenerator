@@ -12,7 +12,8 @@ public class CircuitGenerator : ModuleRules
         {
             "Core",
             "CoreUObject",
-            "Engine"
+            "Engine",
+            "PhysicsCore"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[]

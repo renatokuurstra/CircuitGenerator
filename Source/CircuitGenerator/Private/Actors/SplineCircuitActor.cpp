@@ -3,6 +3,7 @@
 #include "Actors/SplineCircuitActor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Engine/StaticMesh.h"
 
 #if WITH_EDITOR
@@ -60,7 +61,13 @@ void ASplineCircuitActor::RecalculateSpline()
 		
 		SplineMesh->RegisterComponent();
 		SplineMesh->SetStaticMesh(Mesh);
-		SplineMesh->SetMobility(EComponentMobility::Movable);
+		SplineMesh->SetMobility(Mobility);
+		SplineMesh->SetCollisionEnabled(CollisionEnabled);
+		SplineMesh->SetCollisionProfileName(CollisionProfileName);
+		if (PhysicsMaterialOverride)
+		{
+			SplineMesh->SetPhysMaterialOverride(PhysicsMaterialOverride);
+		}
 		SplineMesh->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 		const float StartDistance = i * ActualSegmentLength;
